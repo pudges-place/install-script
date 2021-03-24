@@ -275,7 +275,6 @@ function i3wm() {
    pacman -S --noconfirm --needed - < pkg-list
    ok_nok  # function call
    # configure i3wm
-   cd /home/$username
    sudo -u $username mkdir /home/$username/.config
    sudo -u $username git clone https://github.com/endeavouros-team/endeavouros-i3wm-setup.git
    cd endeavouros-i3wm-setup
@@ -297,10 +296,11 @@ function sway() {
    targetde="sway"
    gittarget="EndeavourOS-Community-Editions/"$targetde".git"
    targetgroup="name: \"sway tiling on wayland\""
+   cd /home/$username
+   create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
    ok_nok  # function call
    # configure Sway
-   cd /home/$username
    sudo -u $username mkdir /home/$username/.config
    sudo -u $username git clone https://github.com/OdiousImp2604/SwayEOS.git
    cd SwayEOS
@@ -326,6 +326,8 @@ function bspwm() {
    targetde="bspwm"
    gittarget="EndeavourOS-Community-Editions/"$targetde".git"
    targetgroup="name: \"bspwm\""
+   cd /home/$username
+   create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
    ok_nok  # function call
    # configure BSPWM
