@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# this is a test
 ZONE_DIR="/usr/share/zoneinfo/"
 declare -a timezone_list
 
