@@ -26,6 +26,8 @@ Setup_miniDLNA.pdf
 Most people will want the EOS-desktop-instructions.pdf
 
 If you have any questions or problems, go to
+
 https://forum.endeavouros.com
+
 where you will find a friendly and helpful community.
 
