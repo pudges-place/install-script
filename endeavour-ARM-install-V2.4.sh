@@ -194,7 +194,13 @@ esac
 function xfce4() {
    printf "\n${CYAN}Installing XFCE4 ...${NC}\n"
    message="\nInstalling XFCE4  "
-   pacman -S --noconfirm --needed - < xfce4-pkg-list
+   targetde="install-scripts"
+   gittarget="endeavouros-team/"$targetde".git"
+   targetgroup="name: \"XFCE4-Desktop\""
+   changeuserdir="false"
+   create-pkg-list
+   pacman -S --noconfirm --needed - < pkg-list
+   cd /root/install-script
    ok_nok  # function call
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -204,7 +210,13 @@ function xfce4() {
 function mate() {
    printf "\n${CYAN}Installing Mate...${NC}\n"
    message="\nInstalling Mate  "
-   pacman -S --noconfirm --needed - < mate-pkg-list
+   targetde="install-scripts"
+   gittarget="endeavouros-team/"$targetde".git"
+   targetgroup="name: \"MATE-Desktop\""
+   changeuserdir="false"
+   create-pkg-list
+   pacman -S --noconfirm --needed - < pkg-list
+   cd /root/install-script
    ok_nok  # function call
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -214,7 +226,13 @@ function mate() {
 function kde() {
    printf "\n${CYAN}Installing KDE Plasma...${NC}\n"
    message="\nInstalling KDE Plasma  "
-   pacman -S --noconfirm --needed - < kde-pkg-list
+   targetde="install-scripts"
+   gittarget="endeavouros-team/"$targetde".git"
+   targetgroup="name: \"KDE-Desktop\""
+   changeuserdir="false"
+   create-pkg-list
+   pacman -S --noconfirm --needed - < pkg-list
+   cd /root/install-script
    pacman -Rs --noconfirm discover
    ok_nok  # function call
 #   cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
@@ -226,7 +244,13 @@ function kde() {
 function gnome() {
    printf "\n${CYAN}Installing Gnome...${NC}\n"
    message="\nInstalling Gnome"
-   pacman -S --noconfirm --needed - < gnome-pkg-list
+   targetde="install-scripts"
+   gittarget="endeavouros-team/"$targetde".git"
+   targetgroup="name: \"GNOME-Desktop\""
+   changeuserdir="false"
+   create-pkg-list
+   pacman -S --noconfirm --needed - < pkg-list
+   cd /root/install-script
 #   pacman -R --noconfirm gnome-software
    ok_nok  # function call
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
@@ -238,7 +262,13 @@ function gnome() {
 function cinnamon() {
   printf "\n${CYAN}Installing Cinnamon...${NC}\n"
   message="\nInstalling Cinnamon  "
-  pacman -S --noconfirm --needed - < cinnamon-pkg-list
+ targetde="install-scripts"
+ gittarget="endeavouros-team/"$targetde".git"
+ targetgroup="name: \"Cinnamon-Desktop\""
+ changeuserdir="false"
+ create-pkg-list
+  pacman -S --noconfirm --needed - < pkg-list
+  cd /root/install-script
   ok_nok  # function call
   cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
   cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -248,7 +278,13 @@ function cinnamon() {
 function budgie() {
   printf "\n${CYAN}Installing Budgie-Desktop...${NC}\n"
   message="\nInstalling Budgie-Desktop"
-  pacman -S --noconfirm --needed - < budgie-pkg-list
+  targetde="install-scripts"
+  gittarget="endeavouros-team/"$targetde".git"
+  targetgroup="name: \"Budgie-Desktop\""
+  changeuserdir="false"
+  create-pkg-list
+  pacman -S --noconfirm --needed - < pkg-list
+  cd /root/install-script
   ok_nok  # function call
   cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
   cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
