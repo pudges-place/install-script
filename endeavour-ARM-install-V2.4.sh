@@ -43,8 +43,14 @@ sleep 1
 
 
 function create-pkg-list() {
-sudo -u $username git clone https://github.com/$gittarget
-cd /home/$username/$targetde
+if [ $changeuserdir == "true" ]
+then
+   sudo -u $username git clone https://github.com/$gittarget
+   cd /home/$username/$targetde
+else
+   git clone https://github.com/$gittarget
+   cd $targetde
+fi
 startnumber=$(grep -n "$targetgroup" netinstall.yaml | awk -F':' '{print $1}')
 startnumber=$(($startnumber + 6))
 currentno=$startnumber
@@ -255,8 +261,10 @@ function lxqt() {
    targetde="install-scripts"
    gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"LXQT-Desktop\""
+   changeuserdir="false"
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
+   cd /root/install-script
    ok_nok  # function call
 #   cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
 #   cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -270,6 +278,7 @@ function i3wm() {
    targetde="endeavouros-i3wm-setup"
    gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"i3 Window Manager\""
+   changeuserdir="true"
    cd /home/$username
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
@@ -296,6 +305,7 @@ function sway() {
    targetde="sway"
    gittarget="EndeavourOS-Community-Editions/"$targetde".git"
    targetgroup="name: \"sway tiling on wayland\""
+   changeuserdir="true"
    cd /home/$username
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
