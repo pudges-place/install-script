@@ -43,13 +43,12 @@ sleep 1
 
 
 function create-pkg-list() {
-if [ $changeuserdir == "true" ]
+if [ $windowmanager == "true" ]
 then
    sudo -u $username git clone https://github.com/$gittarget
    cd /home/$username/$targetde
 else
-   git clone https://github.com/$gittarget
-   cd $targetde
+   wget https://github.com/endeavouros-team/install-scripts/blob/master/netinstall.yaml
 fi
 startnumber=$(grep -n "$targetgroup" netinstall.yaml | awk -F':' '{print $1}')
 startnumber=$(($startnumber + 6))
@@ -194,13 +193,12 @@ esac
 function xfce4() {
    printf "\n${CYAN}Installing XFCE4 ...${NC}\n"
    message="\nInstalling XFCE4  "
-   targetde="install-scripts"
-   gittarget="endeavouros-team/"$targetde".git"
+#   targetde="install-scripts"
+#   gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"XFCE4-Desktop\""
-   changeuserdir="false"
+   windowmanager="false"
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
-   cd /root/install-script
    ok_nok  # function call
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -210,13 +208,12 @@ function xfce4() {
 function mate() {
    printf "\n${CYAN}Installing Mate...${NC}\n"
    message="\nInstalling Mate  "
-   targetde="install-scripts"
-   gittarget="endeavouros-team/"$targetde".git"
+#   targetde="install-scripts"
+#   gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"MATE-Desktop\""
-   changeuserdir="false"
+   windowmanager="false"
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
-   cd /root/install-script
    ok_nok  # function call
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -226,13 +223,12 @@ function mate() {
 function kde() {
    printf "\n${CYAN}Installing KDE Plasma...${NC}\n"
    message="\nInstalling KDE Plasma  "
-   targetde="install-scripts"
-   gittarget="endeavouros-team/"$targetde".git"
+#   targetde="install-scripts"
+#   gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"KDE-Desktop\""
-   changeuserdir="false"
+   windowmanager="false"
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
-   cd /root/install-script
    pacman -Rs --noconfirm discover
    ok_nok  # function call
 #   cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
@@ -243,14 +239,13 @@ function kde() {
 
 function gnome() {
    printf "\n${CYAN}Installing Gnome...${NC}\n"
-   message="\nInstalling Gnome"
-   targetde="install-scripts"
+#   message="\nInstalling Gnome"
+#   targetde="install-scripts"
    gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"GNOME-Desktop\""
-   changeuserdir="false"
+   windowmanager="false"
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
-   cd /root/install-script
 #   pacman -R --noconfirm gnome-software
    ok_nok  # function call
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
@@ -262,13 +257,12 @@ function gnome() {
 function cinnamon() {
   printf "\n${CYAN}Installing Cinnamon...${NC}\n"
   message="\nInstalling Cinnamon  "
- targetde="install-scripts"
- gittarget="endeavouros-team/"$targetde".git"
- targetgroup="name: \"Cinnamon-Desktop\""
- changeuserdir="false"
- create-pkg-list
+# targetde="install-scripts"
+# gittarget="endeavouros-team/"$targetde".git"
+  targetgroup="name: \"Cinnamon-Desktop\""
+  windowmanager="false"
+  create-pkg-list
   pacman -S --noconfirm --needed - < pkg-list
-  cd /root/install-script
   ok_nok  # function call
   cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
   cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -278,13 +272,12 @@ function cinnamon() {
 function budgie() {
   printf "\n${CYAN}Installing Budgie-Desktop...${NC}\n"
   message="\nInstalling Budgie-Desktop"
-  targetde="install-scripts"
-  gittarget="endeavouros-team/"$targetde".git"
+#  targetde="install-scripts"
+#  gittarget="endeavouros-team/"$targetde".git"
   targetgroup="name: \"Budgie-Desktop\""
-  changeuserdir="false"
+  windowmanager="false"
   create-pkg-list
   pacman -S --noconfirm --needed - < pkg-list
-  cd /root/install-script
   ok_nok  # function call
   cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
   cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -294,13 +287,12 @@ function budgie() {
 function lxqt() {
    printf "\n${CYAN}Installing LXQT...${NC}\n"
    message="\nInstalling LXQT  "
-   targetde="install-scripts"
-   gittarget="endeavouros-team/"$targetde".git"
+#   targetde="install-scripts"
+#   gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"LXQT-Desktop\""
-   changeuserdir="false"
+   windowmanager="false"
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
-   cd /root/install-script
    ok_nok  # function call
 #   cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
 #   cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -314,7 +306,7 @@ function i3wm() {
    targetde="endeavouros-i3wm-setup"
    gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"i3 Window Manager\""
-   changeuserdir="true"
+   windowmanager="true"
    cd /home/$username
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
@@ -341,7 +333,7 @@ function sway() {
    targetde="sway"
    gittarget="EndeavourOS-Community-Editions/"$targetde".git"
    targetgroup="name: \"sway tiling on wayland\""
-   changeuserdir="true"
+   windowmanager="true"
    cd /home/$username
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
@@ -372,6 +364,7 @@ function bspwm() {
    targetde="bspwm"
    gittarget="EndeavourOS-Community-Editions/"$targetde".git"
    targetgroup="name: \"bspwm\""
+   windowmanager="true"
    cd /home/$username
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
