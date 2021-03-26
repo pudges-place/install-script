@@ -48,7 +48,7 @@ then
    sudo -u $username git clone https://github.com/$gittarget
    cd /home/$username/$targetde
 else
-   wget https://github.com/endeavouros-team/install-scripts/blob/master/netinstall.yaml
+   wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml
 fi
 startnumber=$(grep -n "$targetgroup" netinstall.yaml | awk -F':' '{print $1}')
 startnumber=$(($startnumber + 6))
