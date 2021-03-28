@@ -348,7 +348,7 @@ function sway() {
    sudo -u $username chmod -R +x /home/$username/.config/sway/scripts
    sudo -u $username chmod -R +x /home/$username/.config/waybar/scripts  
    cd /home/$username
-   sudo -u $username rm -rf /home/$username/SwayEOS
+   sudo -u $username rm -rf /home/$username/sway
    cd /root/install-script
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -385,7 +385,7 @@ function bspwm() {
    sudo -u $username chmod -R +x /home/$username/.config/polybar/scripts  
    fc-cache -f -v
    cd /home/$username
-   rm -rf /home/$username/bspwm
+   sudo -u $username rm -rf /home/$username/bspwm
    cd /root/install-script
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
