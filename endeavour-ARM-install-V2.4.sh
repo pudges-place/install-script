@@ -319,9 +319,9 @@ function i3wm() {
    sudo -u $username cp .gtkrc-2.0 .nanorc /home/$username/
    sudo -u $username chmod -R +x /home/$username/.config/i3/scripts
    dbus-launch dconf load / < xed.dconf
-   cd /home/$username
-   sudo -u $username rm -rf /home/$username/endeavouros-i3wm-setup
+#   cd /home/$username
    cd /root/install-script
+   sudo -u $username rm -rf /home/$username/endeavouros-i3wm-setup
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
    systemctl enable lightdm.service
@@ -340,16 +340,16 @@ function sway() {
    ok_nok  # function call
    # configure Sway
    sudo -u $username mkdir /home/$username/.config
-   sudo -u $username git clone https://github.com/OdiousImp2604/SwayEOS.git
-   cd SwayEOS
+#   sudo -u $username git clone https://github.com/OdiousImp2604/SwayEOS.git
+#   cd SwayEOS
    sudo -u $username cp -R .config/* /home/$username/.config/
    sudo -u $username cp -R .profile /home/$username/.profile
    sudo -u $username cp .gtkrc-2.0 /home/$username/
    sudo -u $username chmod -R +x /home/$username/.config/sway/scripts
    sudo -u $username chmod -R +x /home/$username/.config/waybar/scripts  
-   cd /home/$username
-   sudo -u $username rm -rf /home/$username/sway
+#   cd /home/$username
    cd /root/install-script
+   sudo -u $username rm -rf /home/$username/sway
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
    systemctl enable lightdm.service
@@ -370,13 +370,13 @@ function bspwm() {
    pacman -S --noconfirm --needed - < pkg-list
    ok_nok  # function call
    # configure BSPWM
-   cd /home/$username
+#   cd /home/$username
    sudo -u $username mkdir /home/$username/.config
    sudo -u $username mkdir /home/$username/.local
    sudo -u $username mkdir /home/$username/.local/share
    sudo -u $username mkdir /home/$username/.local/share/fonts
-   git clone https://github.com/OdiousImp2604/bspwm.git
-   cd bspwm
+#   git clone https://github.com/OdiousImp2604/bspwm.git
+#   cd bspwm
    sudo -u $username cp -R IosevkaTermNerdFontComplete.ttf  /home/$username/.local/share/fonts
    sudo -u $username cp -R .config/* /home/$username/.config/
    sudo -u $username cp .gtkrc-2.0 /home/$username/
@@ -384,9 +384,9 @@ function bspwm() {
    sudo -u $username chmod -R +x /home/$username/.config/sxhkd/
    sudo -u $username chmod -R +x /home/$username/.config/polybar/scripts  
    fc-cache -f -v
-   cd /home/$username
-   sudo -u $username rm -rf /home/$username/bspwm
+#   cd /home/$username
    cd /root/install-script
+   sudo -u $username rm -rf /home/$username/bspwm
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
    systemctl enable lightdm.service
