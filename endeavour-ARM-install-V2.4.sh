@@ -183,9 +183,25 @@ case $devicemodel in
                    printf "max_framebuffers=2\ngpu-mem=320\n" >> /boot/config.txt
                    cp /boot/config.txt /boot/config.txt.bkup
                    pacman -S --noconfirm wireless-regdb crda
-                   sed -i 's/#WIRELESS_REGDOM="US"/WIRELESS_REGDOM="US"/g' /etc/conf.d/wireless-regdom ;;                  
-#   "ODROID-N2")    pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git ;;
-   "Odroid XU4")   pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
+                   sed -i 's/#WIRELESS_REGDOM="US"/WIRELESS_REGDOM="US"/g' /etc/conf.d/wireless-regdom ;;
+   "ODROID-N2")    user_confirm=$(whiptail --title " Odroid N2 OS Selection" --menu --notags "\n             Choose Odroid N2 OS or Press right arrow twice to abort" 17 80 2 \
+                   "0" "Official Archlinux Arm base image" \
+                   "1" "Development Mainline kernel and Wayland" \
+                   3>&2 2>&1 1>&3)
+                   if [[ "$user_confirm" = "" ]]
+                   then
+                      printf "\n\nScript aborted by user..${NC}\n\n" && exit
+                   else
+                      if [ $user_confirm == "0" ]
+                      then
+                         pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
+                      else
+                         cp /root/install-script/n2-boot.ini /boot/boot.ini
+                         pacman -S --noconfirm linix-odroid linux-odroid-headers mesa-devel-git odroid-alsa
+                         whiptail --title "Odroid N2 OS Selection" --msgbox "\nThe Development OS with the Mainline kernel and Wayland is for testing at this point.\n\nAny testing is greatly appreciated, but is not recommended for production.\n" 12 80
+                      fi
+                   fi ;;                  
+   "Odroid XU4")  pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
 esac
 }   # end of function devicemodel
 
