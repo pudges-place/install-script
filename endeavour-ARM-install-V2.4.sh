@@ -192,12 +192,12 @@ case $devicemodel in
                    then
                       printf "\n\nScript aborted by user..${NC}\n\n" && exit
                    else
-                      if [ $user_confirm == "0" ]
+                      if [ $user_confirm = "0" ]
                       then
                          pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
                       else
                          cp /root/install-script/n2-boot.ini /boot/boot.ini
-                         pacman -S --noconfirm linix-odroid linux-odroid-headers mesa-devel-git odroid-alsa
+                         pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
                          whiptail --title "Odroid N2 OS Selection" --msgbox "\nThe Development OS with the Mainline kernel and Wayland is for testing at this point.\n\nAny testing is greatly appreciated, but is not recommended for production.\n" 12 80
                       fi
                    fi ;;                  
