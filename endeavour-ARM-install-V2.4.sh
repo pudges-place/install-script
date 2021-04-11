@@ -197,8 +197,8 @@ case $devicemodel in
                          pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
                       else
                          cp /root/install-script/n2-boot.ini /boot/boot.ini
-                         pacman -R --noconfirm linux-odroid-n2 mesa
-                         pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
+                         printf "\nWhen questioned about replacing packages, enter y\n"
+                         pacman -S linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
                          whiptail --title "Odroid N2 OS Selection" --msgbox "\nThe Development OS with the Mainline kernel and Wayland is for testing at this point.\n\nAny testing is greatly appreciated, but is not recommended for production.\n" 12 80
                       fi
                    fi ;;                  
@@ -999,11 +999,17 @@ else
    printf "\nufw allow from $ufwaddr to any port $sshport\n"
    printf "\nWhich will only allow access to the server from your local LAN on the specified port\n"
 fi
-printf "Pressing any key will exit the script and reboot the computer.\n"
 
-printf "\nPress any key to continue \n\n"
+printf "Pressing the c key will exit the script and give a CLI prompt\n"
+printf "to allow the user to use pacman to add additional packages\n"
+printf "Pressing any other key will exit the script and reboot the computer.\n\n"
+
 read -n1 x
 
+if [ "x" == "c" ]
+then
+   exit
+fi
 
 systemctl reboot
 
