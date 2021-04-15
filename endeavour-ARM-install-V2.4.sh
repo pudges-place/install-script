@@ -48,7 +48,11 @@ then
    sudo -u $username git clone https://github.com/$gittarget
    cd /home/$username/$targetde
 else
-   wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml
+   if [ ! -f netinstall.yaml ]
+   then
+      wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/
+   fi
+master/netinstall.yaml
 fi
 startnumber=$(grep -n "$targetgroup" netinstall.yaml | awk -F':' '{print $1}')
 startnumber=$(($startnumber + 6))
@@ -72,6 +76,118 @@ do
 done
 rm linetype
 }       # end of function create-pkg-list
+
+
+function create-base-addons() {
+   wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml
+   base_pkg=( blank )
+   startnumber=$(grep -n "name: \"Base-devel + Common packages\"" netinstall.yaml | awk -F':' '{print $1}')
+   currentno=$(($startnumber + 6 ))
+   a=0   
+   finished=1
+   while [ $finished -ne 0 ]
+   do 
+      teststring=$(awk -v "lineno=$currentno" 'NR==lineno' netinstall.yaml)
+      if [[ $teststring == *"- name"* ]]
+      then
+         finished=0
+      else
+         teststring=$(echo "$teststring" | cut -c 7-)
+         base_pkg[$a]="$teststring"
+         currentno=$(($currentno+1))
+         a=$(($a+1))
+      fi 
+   done
+   END=$(wc -l blacklist | awk '{print $1}')
+   x=1
+   while [[ $x -le $END ]]
+   do
+      temparray=( blank )
+      a=0
+      pattern=$(awk -v c=$x 'NR==c' blacklist)
+      filelen=${#base_pkg[@]}
+      for (( i=0; i<${filelen}; i++ ))
+      do
+         if [ "$pattern" != ${base_pkg[$i]} ]
+         then
+            temparray[$a]="${base_pkg[$i]}"
+            ((a = a + 1))
+         fi
+      done
+    base_pkg=("${temparray[@]}")
+   ((x = x + 1))
+   done
+
+   if [ -f "base-addons" ]
+   then
+      rm base-addons
+   fi  
+   flen=${#base_pkg[@]}
+   for (( i=0; i<${flen}; i++ ))
+   do
+      echo ${base_pkg[$i]} >> base-addons
+   done
+}  # end of function create-base-addons
+
+
+function findmirrorlist() {
+# find and install current endevouros-arm-mirrorlist  
+printf "\n${CYAN}Find current endeavouros-mirrorlist...${NC}\n\n"
+message="\nFind current endeavouros-mirrorlist "
+sleep 1
+curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$armarch | grep endeavouros-mirrorlist |sed s'/^.*endeavouros-mirrorlist/endeavouros-mirrorlist/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g |tail -1 > mirrors
+
+file="mirrors"
+read -d $'\x04' currentmirrorlist < "$file"
+
+printf "\n${CYAN}Downloading endeavouros-mirrorlist...${NC}"
+message="\nDownloading endeavouros-mirrorlist "
+wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/$armarch/$currentmirrorlist 2>> /root/enosARM.log
+ok_nok      # function call
+
+printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
+message="\nInstalling endeavouros-mirrorlist "
+pacman -U --noconfirm $currentmirrorlist &>> /root/enosARM.log
+ok_nok    # function call
+
+printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
+
+# cleanup
+if [ -a $currentmirrorlist ]
+then
+   rm -f $currentmirrorlist
+fi
+rm mirrors
+
+}  # end of function findmirrorlist
+
+
+function findkeyring() {
+printf "\n${CYAN}Find current endeavouros-keyring...${NC}\n\n"
+message="\nFind current endeavouros-keyring "
+sleep 1
+curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$armarch |grep endeavouros-keyring |sed s'/^.*endeavouros-keyring/endeavouros-keyring/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | tail -1 > keys 2>> /root/enosARM.log
+
+file="keys"
+read -d $'\04' currentkeyring < "$file"
+
+
+printf "\n${CYAN}Downloading endeavouros-keyring...${NC}"
+message="\nDownloading endeavouros-keyring "
+wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/$armarch/$currentkeyring 2>> /root/enosARM.log
+ok_nok		# function call
+
+printf "\n${CYAN}Installing endeavouros-keyring...${NC}\n"
+message="Installing endeavouros-keyring "
+pacman -U --noconfirm $currentkeyring &>> /root/enosARM.log
+ok_nok		# function call
+#  cleanup
+if [ -a $currentkeyring ]
+then
+   rm -f $currentkeyring
+fi
+rm keys
+}   # End of function findkeyring
 
 
 function installssd() {
@@ -173,7 +289,6 @@ read -n 1 z
 
 
 function devicemodel() {
-devicemodel=$(dmesg | grep "Machine model" | sed -e '/Raspberry Pi/ c Raspberry Pi' -e '/ODROID-N2/ c ODROID-N2' -e '/Odroid XU4/ c Odroid XU4')
 case $devicemodel in
    "Raspberry Pi") printf "dtparam=audio=on\n" >> /boot/config.txt
                    printf "# hdmi_group=1\n# hdmi-mode=4\n" >> /boot/config.txt
@@ -184,23 +299,13 @@ case $devicemodel in
                    cp /boot/config.txt /boot/config.txt.bkup
                    pacman -S --noconfirm wireless-regdb crda
                    sed -i 's/#WIRELESS_REGDOM="US"/WIRELESS_REGDOM="US"/g' /etc/conf.d/wireless-regdom ;;
-   "ODROID-N2")    user_confirm=$(whiptail --title " Odroid N2 OS Selection" --menu --notags "\n             Choose Odroid N2 OS or Press right arrow twice to abort" 17 80 2 \
-                   "0" "Official Archlinux Arm base image" \
-                   "1" "Development Mainline kernel and Wayland" \
-                   3>&2 2>&1 1>&3)
-                   if [[ "$user_confirm" = "" ]]
-                   then
-                      printf "\n\nScript aborted by user..${NC}\n\n" && exit
-                   else
-                      if [ $user_confirm = "0" ]
+   "ODROID-N2")    if [ $odroidn2_devel = "fALSE" ]
                       then
                          pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
                       else
                          cp /root/install-script/n2-boot.ini /boot/boot.ini
-                         printf "\nWhen questioned about replacing packages, enter y\n"
-                         pacman -S linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
-                         whiptail --title "Odroid N2 OS Selection" --msgbox "\nThe Development OS with the Mainline kernel and Wayland is for testing at this point.\n\nAny testing is greatly appreciated, but is not recommended for production.\n" 12 80
-                      fi
+                         pacman -Rdd --noconfirm linux-odroid-n2 mesa
+                         pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa  
                    fi ;;                  
    "Odroid XU4")  pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
 esac
@@ -488,7 +593,7 @@ case "$armarch" in
         armv7*) armarch=armv7h ;;
 esac
 
-pacman -S --noconfirm --needed libnewt # for whiplash dialog
+pacman -S --noconfirm --needed git libnewt wget # for whiplash dialog & findmirror + keyring
 
 
 ################   Begin user input  #######################
@@ -728,7 +833,37 @@ done
 ###################   end user input  ######################
 
 
+devicemodel=$(dmesg | grep "Machine model" | sed -e '/Raspberry Pi/ c Raspberry Pi' -e '/ODROID-N2/ c ODROID-N2' -e '/Odroid XU4/ c Odroid XU4')
+
+if [ $devicemodel = "ODROID-N2" ]
+then
+    user_confirm=$(whiptail --title " Odroid N2 OS Selection" --menu --notags "\n             Choose Odroid N2 OS or Press right arrow twice to abort" 17 80 2 \
+    "0" "Official Archlinux Arm base image" \
+    "1" "Development Mainline kernel and Wayland" \
+    3>&2 2>&1 1>&3)          
+    if [[ "$user_confirm" = "" ]]
+    then
+        printf "\n\nScript was aborted by user..${NC}\n\n" && exit
+    else
+        if [ $user_confirm = "0" ]
+        then
+            odroidn2_devel="false"
+        else
+            whiptail --title "Odroid N2 OS Selection" --yesno "\nThe Development OS with the Mainline kernel and Wayland is for testing at this point.\n\nAny testing is appreciated, but it is not recommended for production.\n\n                                 Continue?" 14 80
+            if [ $? = "0" ]
+            then
+                odroidn2_devel="true"
+            else
+                printf "\n\nScript was aborted by user..\n\n"  && exit
+            fi
+        fi
+    fi 
+fi
+
+findmirrorlist   # find and install EndeavourOS mirrorlist
+findkeyring      # find and install EndeavourOS keyring
 pacman -Syy
+
 
 ### the following installs all packages needed to match the EndeavourOS base install
 printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
@@ -736,71 +871,16 @@ message="\nInstalling EndeavourOS Base Addons  "
 sleep 2
 if [ "$installtype" == "desktop" ]
 then
+   create-base-addons
    pacman -S --noconfirm --needed - < base-addons
-   systemctl enable NetworkManager
+   systemctl disable dhcpcd.service
+   systemctl enable NetworkManager.service
+   systemctl start NetworkManager.service     
+   sleep 5
 else
    pacman -S --noconfirm --needed - < server-addons
 fi
 ok_nok   # function call
-
-
-
-#################### find and install endevouros-arm-mirrorlist  ############################
-printf "\n${CYAN}Find current endeavouros-mirrorlist...${NC}\n\n"
-message="\nFind current endeavouros-mirrorlist "
-sleep 1
-curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$armarch | grep endeavouros-mirrorlist |sed s'/^.*endeavouros-mirrorlist/endeavouros-mirrorlist/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g |tail -1 > mirrors
-
-file="mirrors"
-read -d $'\x04' currentmirrorlist < "$file"
-
-printf "\n${CYAN}Downloading endeavouros-mirrorlist...${NC}"
-message="\nDownloading endeavouros-mirrorlist "
-wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/$armarch/$currentmirrorlist 2>> logfile2
-ok_nok      # function call
-
-printf "\n${CYAN}Installing endeavouros-mirrorlist...${NC}\n"
-message="\nInstalling endeavouros-mirrorlist "
-pacman -U --noconfirm $currentmirrorlist &>> logfile2
-ok_nok    # function call
-
-printf "\n[endeavouros]\nSigLevel = PackageRequired\nInclude = /etc/pacman.d/endeavouros-mirrorlist\n\n" >> /etc/pacman.conf
-
-# cleanup
-if [ -a $currentmirrorlist ]
-then
-   rm -f $currentmirrorlist
-fi
-
-###################################################################################################################
-
-printf "\n${CYAN}Find current endeavouros-keyring...${NC}\n\n"
-message="\nFind current endeavouros-keyring "
-sleep 1
-curl https://github.com/endeavouros-team/repo/tree/master/endeavouros/$armarch |grep endeavouros-keyring |sed s'/^.*endeavouros-keyring/endeavouros-keyring/'g | sed s'/pkg.tar.zst.*/pkg.tar.zst/'g | tail -1 > keys 2>> /root/enosARM.log
-
-file="keys"
-read -d $'\04' currentkeyring < "$file"
-
-
-printf "\n${CYAN}Downloading endeavouros-keyring...${NC}"
-message="\nDownloading endeavouros-keyring "
-wget https://github.com/endeavouros-team/repo/raw/master/endeavouros/$armarch/$currentkeyring 2>> /root/enosARM.log
-ok_nok		# function call
-
-printf "\n${CYAN}Installing endeavouros-keyring...${NC}\n"
-message="Installing endeavouros-keyring "
-pacman -U --noconfirm $currentkeyring &>> /root/enosARM.log
-ok_nok		# function call
-#  cleanup
-if [ -a $currentkeyring ]
-then
-   rm -f $currentkeyring
-fi
-
-################# End of finding and installing endeavouros-keyring #########################
-
-pacman -Syy    # sync new endeavouros mirrorlist just installed above
 
 
 printf "\n${CYAN}Setting Time Zone...${NC}\n"
@@ -984,33 +1064,29 @@ fi
 sed -i 's/Arch/EndeavourOS/' /etc/issue
 sed -i 's/Arch/EndeavourOS/' /etc/arch-release
 
-rm -rf /root/install-script
+
 
 printf "\n\n${CYAN}Installation is complete!${NC}\n\n"
 if [ "$installtype" == "desktop" ]
 then
    printf "\nRemember to use your new root password when logging in as root\n"
    printf "\nRemember to use your new user name and password when logging into Lightdm\n"
-   printf "\nNo firewall was installed. Consider installing a firewall with eos-Welcome\n"
+   printf "\nNo firewall was installed. Consider installing a firewall with eos-Welcome\n\n"
 else
    printf "\nRemember your new user name and password when remotely logging into the server\n"
    printf "\nSSH server was installed and enabled to listen on port $sshport\n"
    printf "\nufw was installed and enabled with \"logging off\", the default \"deny\", and the following rule"
    printf "\nufw allow from $ufwaddr to any port $sshport\n"
-   printf "\nWhich will only allow access to the server from your local LAN on the specified port\n"
+   printf "\nWhich will only allow access to the server from your local LAN on the specified port\n\n"
 fi
 
-printf "Pressing the c key will exit the script and give a CLI prompt\n"
+printf "Pressing Ctrl c will exit the script and give a CLI prompt\n"
 printf "to allow the user to use pacman to add additional packages\n"
-printf "Pressing any other key will exit the script and reboot the computer.\n\n"
+printf "or change configs. This will not remove install files from /root\n\n"
+printf "Press any key exits the script, removes all install files, and reboots the computer.\n\n"
 
-read -n1 x
-
-if [ "x" == "c" ]
-then
-   exit
-fi
-
+read x
+rm -rf /root/install-script
 systemctl reboot
 
 exit  # end of script
