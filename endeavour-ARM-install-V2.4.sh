@@ -44,6 +44,8 @@ sleep 1
 function create-pkg-list() {
 if [ $windowmanager == "true" ]
 then
+   printf "\nI got to git clone\n"
+   read z
    sudo -u $username git clone https://github.com/$gittarget
    cd /home/$username/$targetde
 else
@@ -73,7 +75,7 @@ do
     fi 
 done
 rm linetype
-rm netinstall.yaml
+# rm netinstall.yaml
 }       # end of function create-pkg-list
 
 
