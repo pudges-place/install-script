@@ -44,7 +44,7 @@ sleep 1
 function create-pkg-list() {
 if [ $windowmanager == "true" ]
 then
-   su $username -c git clone https://github.com/$gittarget
+   su $username -c "git clone https://github.com/$gittarget"
 #   sudo -u $username git clone https://github.com/$gittarget
    cd /home/$username/$targetde
 else
@@ -462,16 +462,16 @@ function sway() {
    pacman -S --noconfirm --needed - < pkg-list
    ok_nok  # function call
    # configure Sway
-   su $username -c mkdir /home/$username/.config
+   su $username -c "mkdir /home/$username/.config"
 #   sudo -u $username mkdir /home/$username/.config
 #   sudo -u $username git clone https://github.com/OdiousImp2604/SwayEOS.git
 #   cd SwayEOS
 
-   su $username -c cp -R .config/* /home/$username/.config/
-   su $username -c cp -R .profile /home/$username/.profile
-   su $username -c cp .gtkrc-2.0 /home/$username/
-   su $username -c chmod -R +x /home/$username/.config/sway/scripts
-   su $username -c chmod -R +x /home/$username/.config/waybar/scripts 
+   su $username -c "cp -R .config/* /home/$username/.config/"
+   su $username -c "cp -R .profile /home/$username/.profile"
+   su $username -c "cp .gtkrc-2.0 /home/$username/"
+   su $username -c "chmod -R +x /home/$username/.config/sway/scripts"
+   su $username -c "chmod -R +x /home/$username/.config/waybar/scripts" 
 
 #   sudo -u $username cp -R .config/* /home/$username/.config/
 #   sudo -u $username cp -R .profile /home/$username/.profile
@@ -480,7 +480,7 @@ function sway() {
 #   sudo -u $username chmod -R +x /home/$username/.config/waybar/scripts  
 #   cd /home/$username
    cd /root/install-script
-   su -u $username rm -rf /home/$username/sway
+   su -u $username "rm -rf /home/$username/sway"
 #   sudo -u $username rm -rf /home/$username/sway
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
