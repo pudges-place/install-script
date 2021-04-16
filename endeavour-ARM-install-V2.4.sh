@@ -14,7 +14,6 @@ generate_timezone_list() {
 		timezone_list+=($timezone)
 		timezone_list+=("")
 	fi
-
 }
 
 function status_checker() {
@@ -50,9 +49,8 @@ then
 else
    if [ ! -f netinstall.yaml ]
    then
-      wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/
+      wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml
    fi
-master/netinstall.yaml
 fi
 startnumber=$(grep -n "$targetgroup" netinstall.yaml | awk -F':' '{print $1}')
 startnumber=$(($startnumber + 6))
@@ -75,6 +73,7 @@ do
     fi 
 done
 rm linetype
+rm netinstall.yaml
 }       # end of function create-pkg-list
 
 
@@ -127,6 +126,7 @@ function create-base-addons() {
    do
       echo ${base_pkg[$i]} >> base-addons
    done
+rm netinstall.yaml
 }  # end of function create-base-addons
 
 
