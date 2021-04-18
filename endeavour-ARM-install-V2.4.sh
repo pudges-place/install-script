@@ -478,7 +478,7 @@ function sway() {
    su $username -c "cp .gtkrc-2.0 /home/$username/"
    su $username -c "chmod -R +x /home/$username/.config/sway/scripts"
    su $username -c "chmod -R +x /home/$username/.config/waybar/scripts"
-   su $username -c "chmod +x /home/$username/.config/wofi/windows.py
+   su $username -c "chmod +x /home/$username/.config/wofi/windows.py"
  
 #   cd /home/$username
    cd /root/install-script
