@@ -305,8 +305,14 @@ case $devicemodel in
                          pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
                       else
                          cp /root/install-script/n2-boot.ini /boot/boot.ini
-                         pacman -Rdd --noconfirm linux-odroid-n2 mesa
-                         pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa  
+                         if [[ $dename == "gnome"  || $dename == "budgie" ]]
+                         then
+                            pacman -Rdd --noconfirm linux-odroid-n2 mesa
+                            pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
+                         else
+                            pacman -Rdd --noconfirm linux-odroid-n2
+                            pacman -S --noconfirm linux-odroid linux-odroid-headers odroid-alsa
+                         fi 
                    fi ;;                  
    "Odroid XU4")  pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
 esac
@@ -471,7 +477,8 @@ function sway() {
    su $username -c "cp -R .profile /home/$username/.profile"
    su $username -c "cp .gtkrc-2.0 /home/$username/"
    su $username -c "chmod -R +x /home/$username/.config/sway/scripts"
-   su $username -c "chmod -R +x /home/$username/.config/waybar/scripts" 
+   su $username -c "chmod -R +x /home/$username/.config/waybar/scripts"
+   su $username -c "chmod +x /home/$username/.config/wofi/windows.py
  
 #   cd /home/$username
    cd /root/install-script
