@@ -482,7 +482,7 @@ function sway() {
  
 #   cd /home/$username
    cd /root/install-script
-   su -u $username "rm -rf /home/$username/sway"
+   su $username -c "rm -rf /home/$username/sway"
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
    systemctl enable lightdm.service
