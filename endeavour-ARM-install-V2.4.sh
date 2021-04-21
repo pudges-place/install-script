@@ -127,7 +127,14 @@ function create-base-addons() {
    do
       echo ${base_pkg[$i]} >> base-addons
    done
-rm netinstall.yaml
+   ####  add packages to parsed base-addons file
+   if [ "$installtype" == "desktop" ]
+   then
+      printf "sudo\n" >> base-addons
+   fi
+   printf "vim\n" >> base-addons
+   ####  stop adding packages to base-addons file
+   rm netinstall.yaml
 }  # end of function create-base-addons
 
 
