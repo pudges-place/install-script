@@ -312,14 +312,14 @@ case $devicemodel in
                          pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
                       else
                          cp /root/install-script/n2-boot.ini /boot/boot.ini
-                         if [[ $dename == "gnome"  || $dename == "budgie" ]]
-                         then
-                            pacman -Rdd --noconfirm linux-odroid-n2 mesa
-                            pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
-                         else
+#                         if [[ $dename == "gnome"  || $dename == "budgie" ]]
+#                         then
+#                            pacman -Rdd --noconfirm linux-odroid-n2 mesa
+#                            pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
+#                         else
                             pacman -Rdd --noconfirm linux-odroid-n2
                             pacman -S --noconfirm linux-odroid linux-odroid-headers odroid-alsa
-                         fi 
+#                         fi 
                    fi ;;                  
    "Odroid XU4")  pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
 esac
