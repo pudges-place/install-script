@@ -79,7 +79,19 @@ rm linetype
 
 
 function create-base-addons() {
-   wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml
+   case $dename in
+      xfce4) wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml ;;
+      mate) wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml ;;
+      kde) wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml ;;
+      gnome) wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml ;;
+      cinnamon) wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml ;;
+      budgie) wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml ;;
+      lxqt) wget https://raw.githubusercontent.com/endeavouros-team/install-scripts/master/netinstall.yaml ;;
+      i3wm) wget https://raw.githubusercontent.com/endeavouros-team/endeavouros-i3wm-setup/master/netinstall.yaml ;;
+      sway) wget https://raw.githubusercontent.com/endeavouros-community-editions/sway/master/netinstall.yaml ;;
+      bspwm) wget https://raw.githubusercontent.com/endeavouros-community-editions/bspwm/master/netinstall.yaml ;;
+   esac
+ 
    base_pkg=( blank )
    startnumber=$(grep -n "name: \"Base-devel + Common packages\"" netinstall.yaml | awk -F':' '{print $1}')
    currentno=$(($startnumber + 6 ))
@@ -127,12 +139,11 @@ function create-base-addons() {
    do
       echo ${base_pkg[$i]} >> base-addons
    done
-   ####  add packages to parsed base-addons file
+   ####  add sudo to parsed base-addons file
    if [ "$installtype" == "desktop" ]
    then
       printf "sudo\n" >> base-addons
-   fi
-   printf "vim\n" >> base-addons
+   fi 
    ####  stop adding packages to base-addons file
    rm netinstall.yaml
 }  # end of function create-base-addons
@@ -307,20 +318,20 @@ case $devicemodel in
                    cp /boot/config.txt /boot/config.txt.bkup
                    pacman -S --noconfirm wireless-regdb crda
                    sed -i 's/#WIRELESS_REGDOM="US"/WIRELESS_REGDOM="US"/g' /etc/conf.d/wireless-regdom ;;
-   "ODROID-N2")    if [ $odroidn2_devel = "fALSE" ]
-                      then
-                         pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
-                      else
-                         cp /root/install-script/n2-boot.ini /boot/boot.ini
+#   "ODROID-N2")    if [ $odroidn2_devel = "fALSE" ]
+#                      then
+#                         pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
+#                      else
+#                         cp /root/install-script/n2-boot.ini /boot/boot.ini
 #                         if [[ $dename == "gnome"  || $dename == "budgie" ]]
 #                         then
 #                            pacman -Rdd --noconfirm linux-odroid-n2 mesa
 #                            pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
 #                         else
-                            pacman -Rdd --noconfirm linux-odroid-n2
-                            pacman -S --noconfirm linux-odroid linux-odroid-headers odroid-alsa
+#                            pacman -Rdd --noconfirm linux-odroid-n2
+#                            pacman -S --noconfirm linux-odroid linux-odroid-headers odroid-alsa
 #                         fi 
-                   fi ;;                  
+#                   fi ;;                  
    "Odroid XU4")  pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
 esac
 }   # end of function devicemodel
@@ -853,30 +864,30 @@ done
 
 devicemodel=$(dmesg | grep "Machine model" | sed -e '/Raspberry Pi/ c Raspberry Pi' -e '/ODROID-N2/ c ODROID-N2' -e '/Odroid XU4/ c Odroid XU4')
 
-if [ $devicemodel = "ODROID-N2" ]
-then
-    user_confirm=$(whiptail --title " Odroid N2 OS Selection" --menu --notags "\n             Choose Odroid N2 OS or Press right arrow twice to abort" 17 80 2 \
-    "0" "Official Archlinux Arm base image" \
-    "1" "Development Mainline kernel and Wayland" \
-    3>&2 2>&1 1>&3)          
-    if [[ "$user_confirm" = "" ]]
-    then
-        printf "\n\nScript was aborted by user..${NC}\n\n" && exit
-    else
-        if [ $user_confirm = "0" ]
-        then
-            odroidn2_devel="false"
-        else
-            whiptail --title "Odroid N2 OS Selection" --yesno "\nThe Development OS with the Mainline kernel and Wayland is for testing at this point.\n\nAny testing is appreciated, but it is not recommended for production.\n\n                                 Continue?" 14 80
-            if [ $? = "0" ]
-            then
-                odroidn2_devel="true"
-            else
-                printf "\n\nScript was aborted by user..\n\n"  && exit
-            fi
-        fi
-    fi 
-fi
+#if [ $devicemodel = "ODROID-N2" ]
+#then
+#    user_confirm=$(whiptail --title " Odroid N2 OS Selection" --menu --notags "\n             Choose Odroid N2 OS or Press right arrow twice to abort" 17 80 2 \
+#    "0" "Official Archlinux Arm base image" \
+#    "1" "Development Mainline kernel and Wayland" \
+#    3>&2 2>&1 1>&3)          
+#    if [[ "$user_confirm" = "" ]]
+#    then
+#        printf "\n\nScript was aborted by user..${NC}\n\n" && exit
+#    else
+#        if [ $user_confirm = "0" ]
+#        then
+#            odroidn2_devel="false"
+#        else
+#            whiptail --title "Odroid N2 OS Selection" --yesno "\nThe Development OS with the Mainline kernel and Wayland is for testing at this point.\n\nAny testing is appreciated, but it is not recommended for production.\n\n                                 Continue?" 14 80
+#            if [ $? = "0" ]
+#            then
+#                odroidn2_devel="true"
+#            else
+#                printf "\n\nScript was aborted by user..\n\n"  && exit
+#            fi
+#        fi
+#    fi 
+#fi
 
 findmirrorlist   # find and install EndeavourOS mirrorlist
 findkeyring      # find and install EndeavourOS keyring
