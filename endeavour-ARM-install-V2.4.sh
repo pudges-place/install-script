@@ -45,7 +45,6 @@ function create-pkg-list() {
 if [ $windowmanager == "true" ]
 then
    su $username -c "git clone https://github.com/$gittarget"
-#   sudo -u $username git clone https://github.com/$gittarget
    cd /home/$username/$targetde
 else
    if [ ! -f netinstall.yaml ]
@@ -74,7 +73,6 @@ do
     fi 
 done
 rm linetype
-# rm netinstall.yaml
 }       # end of function create-pkg-list
 
 
@@ -318,22 +316,11 @@ case $devicemodel in
                    cp /boot/config.txt /boot/config.txt.bkup
                    pacman -S --noconfirm wireless-regdb crda
                    sed -i 's/#WIRELESS_REGDOM="US"/WIRELESS_REGDOM="US"/g' /etc/conf.d/wireless-regdom ;;
-   "ODROID-N2")
-#    if [ $odroidn2_devel = "fALSE" ]
-#                      then
-#                         pacman -S --noconfirm mali-utgard-meson-libgl-x11 xf86-video-fbturbo-git
-#                      else
-                         cp /root/install-script/n2-boot.ini /boot/boot.ini
-#                         if [[ $dename == "gnome"  || $dename == "budgie" ]]
-#                         then
-#                            pacman -Rdd --noconfirm linux-odroid-n2 mesa
-#                            pacman -S --noconfirm linux-odroid linux-odroid-headers mesa-devel-git odroid-alsa
-#                         else
-                            pacman -Rdd --noconfirm linux-odroid-n2
-                            pacman -S --noconfirm linux-odroid linux-odroid-headers odroid-alsa ;;
-#                         fi 
-#                   fi ;;                  
-   "Odroid XU4")  pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
+   "ODROID-N2")    cp /root/install-script/n2-boot.ini /boot/boot.ini
+                   pacman -Rdd --noconfirm linux-odroid-n2
+                   pacman -S --noconfirm linux-odroid linux-odroid-headers
+                   pacman -S --noconfirm odroid-alsa ;;         
+   "Odroid XU4")   pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
 esac
 }   # end of function devicemodel
 
@@ -341,8 +328,6 @@ esac
 function xfce4() {
    printf "\n${CYAN}Installing XFCE4 ...${NC}\n"
    message="\nInstalling XFCE4  "
-#   targetde="install-scripts"
-#   gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"XFCE4-Desktop\""
    windowmanager="false"
    create-pkg-list
@@ -356,8 +341,6 @@ function xfce4() {
 function mate() {
    printf "\n${CYAN}Installing Mate...${NC}\n"
    message="\nInstalling Mate  "
-#   targetde="install-scripts"
-#   gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"MATE-Desktop\""
    windowmanager="false"
    create-pkg-list
@@ -371,8 +354,6 @@ function mate() {
 function kde() {
    printf "\n${CYAN}Installing KDE Plasma...${NC}\n"
    message="\nInstalling KDE Plasma  "
-#   targetde="install-scripts"
-#   gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"KDE-Desktop\""
    windowmanager="false"
    create-pkg-list
@@ -387,14 +368,11 @@ function kde() {
 
 function gnome() {
    printf "\n${CYAN}Installing Gnome...${NC}\n"
-#   message="\nInstalling Gnome"
-#   targetde="install-scripts"
    gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"GNOME-Desktop\""
    windowmanager="false"
    create-pkg-list
    pacman -S --noconfirm --needed - < pkg-list
-#   pacman -R --noconfirm gnome-software
    ok_nok  # function call
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
    cp /etc/lightdm/lightdm-gtk-greeter.conf.default /etc/lightdm/lightdm-gtk-greeter.conf
@@ -405,8 +383,6 @@ function gnome() {
 function cinnamon() {
   printf "\n${CYAN}Installing Cinnamon...${NC}\n"
   message="\nInstalling Cinnamon  "
-# targetde="install-scripts"
-# gittarget="endeavouros-team/"$targetde".git"
   targetgroup="name: \"Cinnamon-Desktop\""
   windowmanager="false"
   create-pkg-list
@@ -420,8 +396,6 @@ function cinnamon() {
 function budgie() {
   printf "\n${CYAN}Installing Budgie-Desktop...${NC}\n"
   message="\nInstalling Budgie-Desktop"
-#  targetde="install-scripts"
-#  gittarget="endeavouros-team/"$targetde".git"
   targetgroup="name: \"Budgie-Desktop\""
   windowmanager="false"
   create-pkg-list
@@ -435,8 +409,6 @@ function budgie() {
 function lxqt() {
    printf "\n${CYAN}Installing LXQT...${NC}\n"
    message="\nInstalling LXQT  "
-#   targetde="install-scripts"
-#   gittarget="endeavouros-team/"$targetde".git"
    targetgroup="name: \"LXQT-Desktop\""
    windowmanager="false"
    create-pkg-list
@@ -467,7 +439,6 @@ function i3wm() {
    su $username -c "cp .gtkrc-2.0 .nanorc /home/$username/"
    su $username -c "chmod -R +x /home/$username/.config/i3/scripts"
    dbus-launch dconf load / < xed.dconf
-#   cd /home/$username
    cd /root/install-script
    su $username -c "rm -rf /home/$username/endeavouros-i3wm-setup"
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
@@ -488,18 +459,12 @@ function sway() {
    ok_nok  # function call
    # configure Sway
    su $username -c "mkdir /home/$username/.config"
-#   sudo -u $username mkdir /home/$username/.config
-#   sudo -u $username git clone https://github.com/OdiousImp2604/SwayEOS.git
-#   cd SwayEOS
-
    su $username -c "cp -R .config/* /home/$username/.config/"
    su $username -c "cp -R .profile /home/$username/.profile"
    su $username -c "cp .gtkrc-2.0 /home/$username/"
    su $username -c "chmod -R +x /home/$username/.config/sway/scripts"
    su $username -c "chmod -R +x /home/$username/.config/waybar/scripts"
    su $username -c "chmod +x /home/$username/.config/wofi/windows.py"
- 
-#   cd /home/$username
    cd /root/install-script
    su $username -c "rm -rf /home/$username/sway"
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
@@ -522,13 +487,10 @@ function bspwm() {
    pacman -S --noconfirm --needed - < pkg-list
    ok_nok  # function call
    # configure BSPWM
-#   cd /home/$username
    su $username -c "mkdir /home/$username/.config"
    su $username -c "mkdir /home/$username/.local"
    su $username -c "mkdir /home/$username/.local/share"
    su $username -c "mkdir /home/$username/.local/share/fonts"
-#   git clone https://github.com/OdiousImp2604/bspwm.git
-#   cd bspwm
    su $username -c "cp -R IosevkaTermNerdFontComplete.ttf  /home/$username/.local/share/fonts"
    su $username -c "cp -R .config/* /home/$username/.config/"
    su $username -c "cp .gtkrc-2.0 /home/$username/"
@@ -536,7 +498,6 @@ function bspwm() {
    su $username -c "chmod -R +x /home/$username/.config/sxhkd/"
    su $username -c "chmod -R +x /home/$username/.config/polybar/scripts  "
    fc-cache -f -v
-#   cd /home/$username
    cd /root/install-script
    su $username -c "rm -rf /home/$username/bspwm"
    cp lightdm-gtk-greeter.conf.default   /etc/lightdm/
@@ -865,35 +826,9 @@ done
 
 devicemodel=$(dmesg | grep "Machine model" | sed -e '/Raspberry Pi/ c Raspberry Pi' -e '/ODROID-N2/ c ODROID-N2' -e '/Odroid XU4/ c Odroid XU4')
 
-#if [ $devicemodel = "ODROID-N2" ]
-#then
-#    user_confirm=$(whiptail --title " Odroid N2 OS Selection" --menu --notags "\n             Choose Odroid N2 OS or Press right arrow twice to abort" 17 80 2 \
-#    "0" "Official Archlinux Arm base image" \
-#    "1" "Development Mainline kernel and Wayland" \
-#    3>&2 2>&1 1>&3)          
-#    if [[ "$user_confirm" = "" ]]
-#    then
-#        printf "\n\nScript was aborted by user..${NC}\n\n" && exit
-#    else
-#        if [ $user_confirm = "0" ]
-#        then
-#            odroidn2_devel="false"
-#        else
-#            whiptail --title "Odroid N2 OS Selection" --yesno "\nThe Development OS with the Mainline kernel and Wayland is for testing at this point.\n\nAny testing is appreciated, but it is not recommended for production.\n\n                                 Continue?" 14 80
-#            if [ $? = "0" ]
-#            then
-#                odroidn2_devel="true"
-#            else
-#                printf "\n\nScript was aborted by user..\n\n"  && exit
-#            fi
-#        fi
-#    fi 
-#fi
-
 findmirrorlist   # find and install EndeavourOS mirrorlist
 findkeyring      # find and install EndeavourOS keyring
 pacman -Syy
-
 
 ### the following installs all packages needed to match the EndeavourOS base install
 printf "\n${CYAN}Installing EndeavourOS Base Addons...${NC}\n"
