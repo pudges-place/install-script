@@ -318,8 +318,7 @@ case $devicemodel in
                    sed -i 's/#WIRELESS_REGDOM="US"/WIRELESS_REGDOM="US"/g' /etc/conf.d/wireless-regdom ;;
    "ODROID-N2")    cp /root/install-script/n2-boot.ini /boot/boot.ini
                    pacman -Rdd --noconfirm linux-odroid-n2
-                   pacman -S --noconfirm linux-odroid linux-odroid-headers
-                   pacman -S --noconfirm odroid-alsa ;;         
+                   pacman -S --noconfirm linux-odroid linux-odroid-headers odroid-alsa ;;         
    "Odroid XU4")   pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
 esac
 }   # end of function devicemodel
