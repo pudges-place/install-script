@@ -317,6 +317,11 @@ case $devicemodel in
                    pacman -S --noconfirm wireless-regdb crda
                    sed -i 's/#WIRELESS_REGDOM="US"/WIRELESS_REGDOM="US"/g' /etc/conf.d/wireless-regdom ;;
    "ODROID-N2")    cp /root/install-script/n2-boot.ini /boot/boot.ini
+                   lsblk -f | grep sda >/dev/null
+                   if [ $? =0 ]
+                   then
+                      sed -i 's/root=\/dev\/mmcblk${devno}p2/root=\/dev\/sda2/g' /boot/boot.ini      
+                   fi
                    pacman -Rdd --noconfirm linux-odroid-n2
                    pacman -S --noconfirm linux-odroid linux-odroid-headers odroid-alsa ;;         
    "Odroid XU4")   pacman -S --noconfirm odroid-xu3-libgl-headers odroid-xu3-libgl-x11 xf86-video-armsoc-odroid xf86-video-fbturbo-git ;;
